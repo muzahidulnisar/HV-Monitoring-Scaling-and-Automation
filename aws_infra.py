@@ -166,7 +166,7 @@ create_SNS.create_cloudwatch_alarm(alarm_name='HighRequestCount', metric_name='R
                                    evaluation_periods=1, sns_topic_arn=high_traffic_topic_arn, region=region)
 
 # Auto Scaling group notofication
-create_SNS.create_autoscaling_notification('YourAutoScalingGroupName', scaling_events_topic_arn, region)
+create_SNS.create_autoscaling_notification(asg_name, scaling_events_topic_arn, region)
 
 
 # Delete AWS components created above

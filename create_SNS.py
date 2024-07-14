@@ -85,4 +85,4 @@ def create_autoscaling_notification(asg_name, sns_topic_arn, region):
     )
 
 # Auto Scaling group Notification
-create_autoscaling_notification('YourAutoScalingGroupName', scaling_events_topic_arn, region)
+create_autoscaling_notification('Test-HV-ASG', scaling_events_topic_arn, region)
