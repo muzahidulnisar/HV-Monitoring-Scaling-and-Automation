@@ -1,6 +1,6 @@
 import boto3
 
-def create_launch_template(instance_id, image_id, template_name, region):
+def create_launch_templates(instance_id, image_id, template_name, region):
     ec2_client = boto3.client('ec2', region_name=region)
     try:
         # Describe the instance to get its configuration
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     template_name = 'Test-HV-LT-1'
     region = 'ap-south-1'
 
-    template_id = create_launch_template(instance_id, image_id, template_name, region)
+    template_id = create_launch_templates(instance_id, image_id, template_name, region)
     if template_id:
         print(f"Successfully created Launch Template: {template_id}")
     else:

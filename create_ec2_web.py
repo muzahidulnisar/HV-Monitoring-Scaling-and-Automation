@@ -72,13 +72,13 @@ def create_security_group(ec2_client, s_group_name, vpc_id):
         return None
 
 
-def create_ec2_instance():
+def create_ec2_instance(vpcid, subnetid, securitygroupname, imageid, instancetype, keyname, userdata):
     ec2 = boto3.resource('ec2')
     ec2_client = boto3.client('ec2')
 
-    vpc_id = 'vpc-07e6e24c20a77665a'
-    subnet_id = 'subnet-026f4fe578c3710b3'
-    security_group_name = 'test-hv-sg'
+    vpc_id = vpcid
+    subnet_id = subnetid
+    security_group_name = securitygroupname
 
     #check if the security group already exists
     security_group_id = get_security_group_id(ec2_client, security_group_name, vpc_id)
@@ -91,11 +91,11 @@ def create_ec2_instance():
 
     # Create the EC2 instance
     instances = ec2.create_instances(
-        ImageId='ami-0c2af51e265bd5e0e',  # Ubuntu 22.04 AMI ID (Taken from AWS)
+        ImageId=imageid,  # Ubuntu 22.04 AMI ID (Taken from AWS)
         MinCount=1,
         MaxCount=1,
-        InstanceType='t2.micro',
-        KeyName='test-hv',
+        InstanceType=instancetype,
+        KeyName=keyname,
         TagSpecifications=[
             {
                 'ResourceType': 'instance',
@@ -128,7 +128,21 @@ def create_ec2_instance():
             'SubnetId': subnet_id,
             'Groups': [security_group_id]
         }],
-        UserData='''#!/bin/bash
+        UserData=userdata
+    )
+
+    instance_id = instances[0].id
+    return instance_id
+
+
+vpcid = 'vpc-07e6e24c20a77665a'
+subnetid = 'subnet-026f4fe578c3710b3'
+securitygroupname = 'test-hv-sg'
+imageid='ami-0c2af51e265bd5e0e'
+instancetype='t2.micro'
+keyname='test-hv'
+
+userdata ='''#!/bin/bash
                     apt-get update
                     apt-get install -y python3-pip git nginx
                     git clone https://github.com/alitahir4024/Weather-API-Project.git /var/www/weather-api-project
@@ -149,10 +163,6 @@ def create_ec2_instance():
                     systemctl restart nginx
                     systemctl enable nginx
                     '''
-    )
 
-    instance_id = instances[0].id
-    return instance_id
-
-instance_id = create_ec2_instance()
+instance_id = create_ec2_instance(vpcid, subnetid, securitygroupname, imageid, instancetype, keyname, userdata)
 print("Created instance with ID:", instance_id)
